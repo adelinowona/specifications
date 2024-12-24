@@ -68,16 +68,16 @@ problem of benchmarking an operation over many iterations, such as 100,000 docum
 extreme forms of measurement:
 
 - measuring a single insertion 100,000 times -- in this case, the timing code is likely to be a greater proportion of
-    executed code, which could routinely evict the insertion code from CPU caches or mislead a JIT optimizer and throw
-    off results
+  executed code, which could routinely evict the insertion code from CPU caches or mislead a JIT optimizer and throw
+  off results
 - measuring 100,000 insertions one time -- in this case, the longer the timer runs, the higher the likelihood that an
-    external event occurs that affects the time of the run
+  external event occurs that affects the time of the run
 
 Therefore, we choose a middle ground:
 
 - measuring the same 1000 insertions over 100 iterations -- each timing run includes enough operations that insertion
-    code dominates timing code; unusual system events are likely to affect only a fraction of the 100 timing
-    measurements
+  code dominates timing code; unusual system events are likely to affect only a fraction of the 100 timing
+  measurements
 
 With 100 timings of inserting the same 1000 documents, we build up a statistical distribution of the operation timing,
 allowing a more robust estimate of performance than a single measurement. (In practice, the number of iterations could
@@ -91,14 +91,14 @@ Each benchmark is structured into discrete setup/execute/teardown phases. Phases
 given in a subsequent section:
 
 - setup -- (ONCE PER MICRO-BENCHMARK) something to do once before any benchmarking, e.g. construct a client object, load
-    test data, insert data into a collection, etc.
+  test data, insert data into a collection, etc.
 - before task -- (ONCE PER ITERATION) something to do before every task iteration, e.g. drop a collection, or reload
-    test data (if the test run modifies it), etc.
+  test data (if the test run modifies it), etc.
 - do task -- (ONCE PER ITERATION) smallest amount of code necessary to execute the task; e.g. insert 1000 documents one
-    by one into the database, or retrieve 1000 document of test data from the database, etc.
+  by one into the database, or retrieve 1000 document of test data from the database, etc.
 - after task -- (ONCE PER ITERATION) something to do after every task iteration (if necessary)
 - teardown -- (ONCE PER MICRO-BENCHMARK) something done once after all benchmarking is complete (if necessary); e.g.
-    drop the test database
+  drop the test database
 
 The wall-clock execution time of each "do task" phase will be recorded. We use wall clock time to model user experience
 and as a lowest-common denominator across languages and threading models. Iteration timing should be done with a
@@ -117,7 +117,7 @@ following algorithm:
 
 - Given a 0-indexed array A of N iteration wall clock times
 - Sort the array into ascending order (i.e. shortest time first)
-- Let the index i for percentile p in the range \[1,100\] be defined as: `i = int(N * p / 100) - 1`
+- Let the index i for percentile p in the range [1,100] be defined as: `i = int(N * p / 100) - 1`
 
 *N.B. This is the [Nearest Rank](https://en.wikipedia.org/wiki/Percentile#The_Nearest_Rank_method) algorithm, chosen for
 its utter simplicity given that it needs to be implemented identically across multiple languages for every driver.*
@@ -416,7 +416,7 @@ Dataset size: For score purposes, the dataset size for a task is the size of the
 times 10,000 operations, which equals 2,750,000 bytes or 2.75 MB.
 
 | Phase       | Description                                                                                                                                                                  |
-| ----------- |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Construct a MongoClient object. Drop the `perftest` database. Load the SMALL_DOC dataset into memory as a language-appropriate document type (or JSON string for C).         |
 | Before task | Drop the `corpus` collection. Create an empty `corpus` collection with the `create` command. Construct a Collection object for the `corpus` collection to use for insertion. |
 | Do task     | Do an ordered `insertMany` with 10,000 copies of the document. DO NOT manually add an `_id` field; leave it to the driver or database.                                       |
@@ -433,13 +433,13 @@ bytes.
 Dataset size: For score purposes, the dataset size for a task is the size of the single-document source file (2,731,089
 bytes) times 10 operations, which equals 27,310,890 bytes or 27.31 MB.
 
-| Phase       | Description                                                                                                                                                                        |
-| ----------- |------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Setup       | Construct a MongoClient object. Drop the `perftest` database. Load the LARGE_DOC dataset into memory as a language-appropriate document type (or JSON string for C).               |
-| Before task | Drop the `corpus` collection. Create an empty `corpus` collection with the `create` command. Construct a Collection object for the `corpus` collection to use for insertion.       |
-| Do task     | Do an ordered `insertMany` with 10 copies of the document.  DO NOT manually add an `_id` field; leave it to the driver or database. |
-| After task  | n/a                                                                                                                                                                                |
-| Teardown    | Drop the `perftest` database.                                                                                                                                                      |
+| Phase       | Description                                                                                                                                                                  |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Setup       | Construct a MongoClient object. Drop the `perftest` database. Load the LARGE_DOC dataset into memory as a language-appropriate document type (or JSON string for C).         |
+| Before task | Drop the `corpus` collection. Create an empty `corpus` collection with the `create` command. Construct a Collection object for the `corpus` collection to use for insertion. |
+| Do task     | Do an ordered `insertMany` with 10 copies of the document. DO NOT manually add an `_id` field; leave it to the driver or database.                                           |
+| After task  | n/a                                                                                                                                                                          |
+| Teardown    | Drop the `perftest` database.                                                                                                                                                |
 
 #### Small doc Collection BulkWrite insert
 
@@ -452,7 +452,7 @@ Dataset size: For score purposes, the dataset size for a task is the size of the
 times 10,000 operations, which equals 2,750,000 bytes or 2.75 MB.
 
 | Phase       | Description                                                                                                                                                                                                                                                                                            |
-|-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Setup       | Construct a MongoClient object. Drop the `perftest` database. Load the SMALL_DOC dataset into memory as a language-appropriate document type (or JSON string for C). Create a list of insert models for 10,000 copies of the document, allowing the driver or database to auto-assign the `_id` field. |
 | Before task | Drop the `corpus` collection. Create an empty `corpus` collection with the `create` command. Construct a Collection object for the `corpus` collection to use for insertion.                                                                                                                           |
 | Do task     | Do an ordered `Collection::bulkWrite` with the list of insert models.                                                                                                                                                                                                                                  |
@@ -470,7 +470,7 @@ Dataset size: For score purposes, the dataset size for a task is the size of the
 bytes) times 10 operations, which equals 27,310,890 bytes or 27.31 MB.
 
 | Phase       | Description                                                                                                                                                                                                                                                                                        |
-|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Construct a MongoClient object. Drop the `perftest` database. Load the LARGE_DOC dataset into memory as a language-appropriate document type (or JSON string for C). Create a list of insert models for 10 copies of the document, allowing the driver or database to auto-assign the `_id` field. |
 | Before task | Drop the `corpus` collection. Create an empty `corpus` collection with the `create` command. Construct a Collection object for the `corpus` collection to use for insertion.                                                                                                                       |
 | Do task     | Do an ordered `Collection::bulkWrite` with the list of insert models.                                                                                                                                                                                                                              |
@@ -488,7 +488,7 @@ Dataset size: For score purposes, the dataset size for a task is the size of the
 times 10,000 operations, which equals 2,750,000 bytes or 2.75 MB.
 
 | Phase       | Description                                                                                                                                                                                                                                                                                                                                      |
-|-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Setup       | Construct a MongoClient object. Drop the `perftest` database. Load the SMALL_DOC dataset into memory as a language-appropriate document type (or JSON string for C). Create a list of insert models for 10,000 copies of the document in the same namespace ("perftest.corpus"), allowing the driver or database to auto-assign the `_id` field. |
 | Before task | Drop the `corpus` collection. Create an empty `corpus` collection with the `create` command. Construct a Collection object for the `corpus` collection to use for insertion.                                                                                                                                                                     |
 | Do task     | Do an ordered `Client::bulkWrite` with the list of insert models.                                                                                                                                                                                                                                                                                |
@@ -506,7 +506,7 @@ Dataset size: For score purposes, the dataset size for a task is the size of the
 bytes) times 10 operations, which equals 27,310,890 bytes or 27.31 MB.
 
 | Phase       | Description                                                                                                                                                                                                                                                                                                                                  |
-|-------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Setup       | Construct a MongoClient object. Drop the `perftest` database. Load the LARGE_DOC dataset into memory as a language-appropriate document type (or JSON string for C). Create a list of insert models for 10 copies of the document in the same namespace ("perftest.corpus"), allowing the driver or database to auto-assign the `_id` field. |
 | Before task | Drop the `corpus` collection. Create an empty `corpus` collection with the `create` command. Construct a Collection object for the `corpus` collection to use for insertion.<br/>                                                                                                                                                            |
 | Do task     | Do an ordered `Client::bulkWrite` with the list of insert models.                                                                                                                                                                                                                                                                            |
@@ -523,13 +523,13 @@ bytes.
 Dataset size: For score purposes, the dataset size for a task is the size of the single-document source file (275 bytes)
 times 20,000 operations (insert + replace), which equals 5,500,000 bytes or 5.5 MB.
 
-| Phase       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-|-------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Setup       | Construct a MongoClient object. Load the SMALL_DOC dataset into memory as a language-appropriate document type (or JSON string for C). <br/> Create a list of 10 numbered collection names (`corpus_1`, `corpus_2`, ...) <br/> Create a list of write models for 10,000 document copies. For each document (where i goes from 0 to 9,999), create three write models with the namespace set to the collection name found at index `i % 10` in your collection names list: <br/> 1. An insert model. <br/> 2. A replace model (using an empty filter and a copy of the document). <br/> 3. A delete model (using an empty filter). <br/> Notes: <br/> - DO NOT manually add an `_id` field; leave it to the driver or database. You should have 30,000  write models in your list. |
-| Before task | Drop the `perftest` database, create it again and create the collections found in your numbered collection names list.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| Do task     | Do an ordered `Client::bulkWrite` with the list of write models.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| After task  | n/a                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| Teardown    | Drop the `perftest` database.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| Phase       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Setup       | Construct a MongoClient object. Load the SMALL_DOC dataset into memory as a language-appropriate document type (or JSON string for C). <br/> Create a list of 10 numbered collection names (`corpus_1`, `corpus_2`, ...) <br/> Create a list of write models for 10,000 document copies. For each document (where i goes from 0 to 9,999), create three write models with the namespace set to the collection name found at index `i % 10` in your collection names list: <br/> 1. An insert model. <br/> 2. A replace model (using an empty filter and a copy of the document). <br/> 3. A delete model (using an empty filter). <br/> Notes: <br/> - DO NOT manually add an `_id` field; leave it to the driver or database. You should have 30,000 write models in your list. |
+| Before task | Drop the `perftest` database, create it again and create the collections found in your numbered collection names list.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Do task     | Do an ordered `Client::bulkWrite` with the list of write models.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| After task  | n/a                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Teardown    | Drop the `perftest` database.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 
 #### Small doc Collection BulkWrite Mixed Operations
 
@@ -541,13 +541,13 @@ bytes.
 Dataset size: For score purposes, the dataset size for a task is the size of the single-document source file (275 bytes)
 times 20,000 operations (insert + replace), which equals 5,500,000 bytes or 5.5 MB.
 
-| Phase       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-|-------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Setup       | Construct a MongoClient object. Drop the `perftest` database. Load the SMALL_DOC dataset into memory as a language-appropriate document type (or JSON string for C). Create a list of write models for 10,000 copies of the document where for each copy of the document add the following models: <br/> 1. insert model. <br/> 2. replace model with a copy and using an empty filter. <br/> 3. delete model using empty filter. <br/> DO NOT manually add an `_id` field; leave it to the driver or database. You should have 30,000  write models in your list. |
-| Before task | Drop the `corpus` collection. Create an empty `corpus` collection with the `create` command. Construct a Collection object for the `corpus` collection to use for insertion.                                                                                                                                                                                                                                                                                                                                                                                       |
-| Do task     | Do an ordered `Collection::bulkWrite` with the list of write models.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| After task  | n/a                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| Teardown    | Drop the `perftest` database.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Phase       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Setup       | Construct a MongoClient object. Drop the `perftest` database. Load the SMALL_DOC dataset into memory as a language-appropriate document type (or JSON string for C). Create a list of write models for 10,000 copies of the document where for each copy of the document add the following models: <br/> 1. insert model. <br/> 2. replace model with a copy and using an empty filter. <br/> 3. delete model using empty filter. <br/> DO NOT manually add an `_id` field; leave it to the driver or database. You should have 30,000 write models in your list. |
+| Before task | Drop the `corpus` collection. Create an empty `corpus` collection with the `create` command. Construct a Collection object for the `corpus` collection to use for insertion.                                                                                                                                                                                                                                                                                                                                                                                      |
+| Do task     | Do an ordered `Collection::bulkWrite` with the list of write models.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| After task  | n/a                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Teardown    | Drop the `perftest` database.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 
 #### GridFS upload
 
@@ -618,13 +618,13 @@ containing 5,000 JSON documents. Each document should be about 1000 bytes.
 Dataset size: For score purposes, the dataset size for a task is the total size of all source files: 565,000,000 bytes
 or 565 MB.
 
-| Phase       | Description                                                                                                                                                                                    |
-| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Setup       | Construct a MongoClient object. Drop the `perftest` database.                                                                                                                                  |
-| Before task | Drop the `corpus` collection. Create an empty `corpus` collection with the `create` command.                                                                                                   |
-| Do task     | Do an unordered insert of all 500,000 documents in the dataset into the `corpus` collection as fast as possible.  Data must be loaded from disk during this phase.  Concurrency is encouraged. |
-| After task  | n/a                                                                                                                                                                                            |
-| Teardown    | Drop the `perftest` database.                                                                                                                                                                  |
+| Phase       | Description                                                                                                                                                                                  |
+| ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Setup       | Construct a MongoClient object. Drop the `perftest` database.                                                                                                                                |
+| Before task | Drop the `corpus` collection. Create an empty `corpus` collection with the `create` command.                                                                                                 |
+| Do task     | Do an unordered insert of all 500,000 documents in the dataset into the `corpus` collection as fast as possible. Data must be loaded from disk during this phase. Concurrency is encouraged. |
+| After task  | n/a                                                                                                                                                                                          |
+| Teardown    | Drop the `perftest` database.                                                                                                                                                                |
 
 #### LDJSON multi-file export
 
@@ -655,13 +655,13 @@ file size corresponds roughly to the output of a (slightly dated) digital camera
 Dataset size: For score purposes, the dataset size for a task is the total size of all source files: 262,144,000 bytes
 or 262.144 MB.
 
-| Phase       | Description                                                                                                                                                                                                           |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Setup       | Construct a MongoClient object. Drop the `perftest` database.                                                                                                                                                         |
-| Before task | Drop the default GridFS bucket in the `perftest` database.  Construct a GridFSBucket object for the default bucket in `perftest` to use for uploads.    Insert a 1-byte file into the bucket (to initialize indexes). |
-| Do task     | Upload all 50 files in the  GRIDFS_MULTI dataset (reading each from disk). Concurrency is encouraged.                                                                                                                 |
-| After task  | n/a                                                                                                                                                                                                                   |
-| Teardown    | Drop the `perftest` database.                                                                                                                                                                                         |
+| Phase       | Description                                                                                                                                                                                                       |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Setup       | Construct a MongoClient object. Drop the `perftest` database.                                                                                                                                                     |
+| Before task | Drop the default GridFS bucket in the `perftest` database. Construct a GridFSBucket object for the default bucket in `perftest` to use for uploads. Insert a 1-byte file into the bucket (to initialize indexes). |
+| Do task     | Upload all 50 files in the GRIDFS_MULTI dataset (reading each from disk). Concurrency is encouraged.                                                                                                              |
+| After task  | n/a                                                                                                                                                                                                               |
+| Teardown    | Drop the `perftest` database.                                                                                                                                                                                     |
 
 #### GridFS multi-file download
 
@@ -690,7 +690,7 @@ Every micro-benchmark has a score equal to the 50th percentile (median) of sampl
 From these micro-benchmarks, the following composite scores must be calculated:
 
 | Composite Name | Compositing formula                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| -------------- |-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | BSONBench      | Average of all BSON micro-benchmarks                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | SingleBench    | Average of all Single-doc micro-benchmarks, except "Run Command"                                                                                                                                                                                                                                                                                                                                                                                                      |
 | MultiBench     | Average of all Multi-doc micro-benchmarks                                                                                                                                                                                                                                                                                                                                                                                                                             |
@@ -725,7 +725,9 @@ TBD: spec system to hold scores over time
 TBD: generated datasets should be park in S3 or somewhere for retrieval by URL
 
 ## Changelog
+
 - 2024-12-23: Add Client and Collection BulkWrite benchmarks
+
 - 2024-01-22: Migrated from reStructuredText to Markdown.
 
 - 2022-10-05: Remove spec front matter and reformat changelog.
@@ -734,26 +736,26 @@ TBD: generated datasets should be park in S3 or somewhere for retrieval by URL
 
 - 2016-08-13:
 
-    - Update corpus files to allow much greater compression of data
-    - Updated LDJSON corpus size to reflect revisions to the test data
-    - Published data files on GitHub and updated instructions on how to find datasets
-    - RunCommand and query benchmark can create collection objects during setup rather than before task. (No change on
-        actual benchmark.)
+  - Update corpus files to allow much greater compression of data
+  - Updated LDJSON corpus size to reflect revisions to the test data
+  - Published data files on GitHub and updated instructions on how to find datasets
+  - RunCommand and query benchmark can create collection objects during setup rather than before task. (No change on
+    actual benchmark.)
 
 - 2016-01-06:
 
-    - Clarify that `bulk insert` means `insert_many`
-    - Clarify that "create a collection" means using the `create` command
-    - Add omitted "upload files" step to setup for GridFS multi-file download; also clarify that steps should be using the
-        default bucket in the `perftest` database
+  - Clarify that `bulk insert` means `insert_many`
+  - Clarify that "create a collection" means using the `create` command
+  - Add omitted "upload files" step to setup for GridFS multi-file download; also clarify that steps should be using the
+    default bucket in the `perftest` database
 
 - 2015-12-23:
 
-    - Rename benchmark names away from MMA/weight class names
-    - Split BSON encoding and decoding micro-benchmarks
-    - Rename BSON micro-benchmarks to better match dataset names
-    - Move "Run Command" micro-benchmark out of composite
-    - Reduced amount of data held in memory and sent to/from the server to decrease memory pressure and increase number of
-        iterations in a reasonable time (e.g. file sizes and number of documents in certain datasets changed)
-    - Create empty collections/indexes during the `before` phase when appropriate
-    - Updated data set sizes to account for changes in the source file structure/size
+  - Rename benchmark names away from MMA/weight class names
+  - Split BSON encoding and decoding micro-benchmarks
+  - Rename BSON micro-benchmarks to better match dataset names
+  - Move "Run Command" micro-benchmark out of composite
+  - Reduced amount of data held in memory and sent to/from the server to decrease memory pressure and increase number of
+    iterations in a reasonable time (e.g. file sizes and number of documents in certain datasets changed)
+  - Create empty collections/indexes during the `before` phase when appropriate
+  - Updated data set sizes to account for changes in the source file structure/size
